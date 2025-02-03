@@ -1,210 +1,127 @@
 #!/bin/bash
 
-# Função para exibir o menu principal
-show_menu() {
+# Função para mostrar o menu principal
+function show_menu() {
     clear
-    echo -e "\e[1;36m███████╗██╗  ██╗ █████╗ ██╗    ██╗ ██████╗ ███████╗███████╗\e[0m"
-    echo -e "\e[1;36m╚══██╔══╝██║  ██║██╔══██╗██║    ██║██╔══██╗██╔════╝██╔════╝\e[0m"
-    echo -e "\e[1;36m   ██║   ███████║███████║██║ █╗ ██║██║  ██║███████╗███████╗\e[0m"
-    echo -e "\e[1;36m   ██║   ██╔══██║██╔══██║██║███╗██║██║  ██║╚════██║╚════██║\e[0m"
-    echo -e "\e[1;36m   ██║   ██║  ██║██║  ██║╚███╔███║██████╔╝███████║███████║\e[0m"
-    echo -e "\e[1;36m   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝╚═════╝ ╚══════╝╚══════╝\e[0m"
-    echo
-    echo -e "\e[1;32m🌟 Shadow Host Menu 🌟\e[0m"
-    echo
-    echo -e "\e[1;33m1.\e[0m 🖥️ HOST SA-MP"
-    echo -e "\e[1;33m2.\e[0m ❌ Sair"
-    echo
-    read -p "Escolha uma opção [1-2]: " option
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;35m      Shadow Host Menu        \033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;36m1. HOST SAMP\033[0m"
+    echo -e "\033[1;36m2. Créditos\033[0m"
+    echo -e "\033[1;31m3. Sair\033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    read -p "Escolha uma opção: " option
     case $option in
-        1)
-            samp_host_menu
-            ;;
-        2)
-            exit 0
-            ;;
-        *)
-            echo -e "\e[1;31mOpção inválida! Tente novamente.\e[0m"
-            sleep 2
-            show_menu
-            ;;
+        1) host_samp_menu ;;
+        2) show_credits ;;
+        3) exit 0 ;;
+        *) echo -e "\033[1;31mOpção inválida! Tente novamente.\033[0m" ; show_menu ;;
     esac
 }
 
-# Função de HOST SA-MP
-samp_host_menu() {
+# Função para o menu de HOST SAMP
+function host_samp_menu() {
     clear
-    echo -e "\e[1;32m🌟 MENU - HOST SA-MP 🌟\e[0m"
-    echo
-    echo -e "\e[1;33m1.\e[0m 🔑 Logar com Key"
-    echo -e "\e[1;33m2.\e[0m 🛠️ Abrir Painel Admin
-    echo -e "\e[1;33m3.\e[0m 🔙 Voltar ao Menu Principal"
-    echo
-    read -p "Escolha uma opção [1-3]: " option
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;34m        Host SAMP Menu        \033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;36m1. Logar Key\033[0m"
+    echo -e "\033[1;36m2. Pegar Key\033[0m"
+    echo -e "\033[1;36m3. Painel Admin\033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    read -p "Escolha uma opção: " option
     case $option in
-        1)
-            logar_key
-            ;;
-        2)
-            painel_admin
-            ;;
-        3)
-            show_menu
-            ;;
-        *)
-            echo -e "\e[1;31mOpção inválida! Tente novamente.\e[0m"
-            sleep 2
-            samp_host_menu
-            ;;
+        1) logar_key ;;
+        2) pegar_key ;;
+        3) painel_admin ;;
+        *) echo -e "\033[1;31mOpção inválida! Tente novamente.\033[0m" ; host_samp_menu ;;
     esac
 }
 
-# Função de logar com Key
-logar_key() {
+# Função para mostrar os créditos
+function show_credits() {
     clear
-    echo -e "\e[1;32m🔑 Por favor, insira sua Key de login:\e[0m"
-    read -p "Key: " key
-    echo "Logando com a Key: $key..."
-    sleep 1
-    logged_in_menu
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;33m        Créditos               \033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;36mDesenvolvido por L7 Zx\033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    read -p "Pressione qualquer tecla para voltar ao menu principal..." dummy
+    show_menu
 }
 
-# Menu após logar com a Key
-logged_in_menu() {
+# Função de login da Key
+function logar_key() {
+    echo -e "\033[1;34mLogando com a Key...\033[0m"
+    # Adicione seu código para logar com a key aqui
+    show_menu
+}
+
+# Função para pegar a Key
+function pegar_key() {
+    echo -e "\033[1;34mPegando a Key...\033[0m"
+    # Adicione seu código para pegar a key aqui
+    show_menu
+}
+
+# Função para acessar o painel admin
+function painel_admin() {
     clear
-    echo -e "\e[1;32m🔒 MENU - LOGADO 🔒\e[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;35m       Painel Admin           \033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    read -s -p "Digite a senha do administrador: " senha
     echo
-    echo -e "\e[1;33m1.\e[0m 🌍 Pegar IP"
-    echo -e "\e[1;33m2.\e[0m 🔐 Logar IP"
-    echo -e "\e[1;33m3.\e[0m 🔄 Atualizar Pastas"
-    echo -e "\e[1;33m4.\e[0m 🖥️ Iniciar Host"
-    echo -e "\e[1;33m5.\e[0m ⏹️ Parar Host"
-    echo -e "\e[1;33m6.\e[0m ❌ Sair"
-    echo
-    read -p "Escolha uma opção [1-6]: " option
-    case $option in
-        1)
-            pegar_ip
-            ;;
-        2)
-            logar_ip
-            ;;
-        3)
-            atualizar_pastas
-            ;;
-        4)
-            iniciar_host
-            ;;
-        5)
-            parar_host
-            ;;
-        6)
-            exit 0
-            ;;
-        *)
-            echo -e "\e[1;31mOpção inválida! Tente novamente.\e[0m"
-            sleep 2
-            logged_in_menu
-            ;;
-    esac
-}
-
-# Função para pegar o IP
-pegar_ip() {
-    clear
-    echo -e "\e[1;32m🌍 Obtendo seu IP...\e[0m"
-    ip=$(curl -s ifconfig.me)
-    echo -e "\e[1;32mSeu IP: $ip\e[0m"
-    sleep 2
-    logged_in_menu
-}
-
-# Função para logar o IP
-logar_ip() {
-    clear
-    echo -e "\e[1;32m🔐 Insira o IP para logar:\e[0m"
-    read -p "IP: " ip
-    echo -e "\e[1;32mLogando no IP $ip...\e[0m"
-    sleep 2
-    logged_in_menu
-}
-
-# Função para atualizar as pastas
-atualizar_pastas() {
-    clear
-    echo -e "\e[1;32m🔄 Atualizando pastas...\e[0m"
-    # Adicione seu código para atualizar pastas
-    sleep 2
-    logged_in_menu
-}
-
-# Função para iniciar o host
-iniciar_host() {
-    clear
-    echo -e "\e[1;32m🖥️ Iniciando o Host SA-MP...\e[0m"
-    # Comando para iniciar o servidor
-    sleep 2
-    logged_in_menu
-}
-
-# Função para parar o host
-parar_host() {
-    clear
-    echo -e "\e[1;32m⏹️ Parando o Host SA-MP...\e[0m"
-    # Comando para parar o servidor
-    sleep 2
-    logged_in_menu
-}
-
-# Função de painel admin
-painel_admin() {
-    clear
-    echo -e "\e[1;31m🔑 Para acessar o painel admin, insira a senha:\e[0m"
-    read -p "Senha: " senha
-    if [[ "$senha" == "16052011" ]]; then
-        echo -e "\e[1;32m🔐 Acesso concedido! Bem-vindo ao painel Admin.\e[0m"
+    if [ "$senha" == "16052011" ]; then
+        echo -e "\033[1;32mSenha correta! Acessando painel...\033[0m"
         admin_menu
     else
-        echo -e "\e[1;31mSenha incorreta! Tente novamente.\e[0m"
-        sleep 2
-        samp_host_menu
+        echo -e "\033[1;31mSenha incorreta. Tente novamente.\033[0m"
+        painel_admin
     fi
 }
 
-# Função de menu Admin
-admin_menu() {
+# Função do menu de administração
+function admin_menu() {
     clear
-    echo -e "\e[1;32m⚙️ PAINEL ADMIN ⚙️\e[0m"
-    echo
-    echo -e "\e[1;33m1.\e[0m 🔑 Gerar Key"
-    echo -e "\e[1;33m2.\e[0m 🔙 Voltar ao Menu Host SA-MP"
-    echo
-    read -p "Escolha uma opção [1-2]: " option
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;33m     Menu de Administração    \033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    echo -e "\033[1;36m1. Atualizar Pastas\033[0m"
+    echo -e "\033[1;36m2. Iniciar Host\033[0m"
+    echo -e "\033[1;36m3. Parar Host\033[0m"
+    echo -e "\033[1;31m4. Voltar\033[0m"
+    echo -e "\033[1;32m==============================\033[0m"
+    read -p "Escolha uma opção: " option
     case $option in
-        1)
-            gerar_key
-            ;;
-        2)
-            samp_host_menu
-            ;;
-        *)
-            echo -e "\e[1;31mOpção inválida! Tente novamente.\e[0m"
-            sleep 2
-            admin_menu
-            ;;
+        1) atualizar_pastas ;;
+        2) iniciar_host ;;
+        3) parar_host ;;
+        4) show_menu ;;
+        *) echo -e "\033[1;31mOpção inválida! Tente novamente.\033[0m" ; admin_menu ;;
     esac
 }
 
-# Função para gerar Key
-gerar_key() {
-    clear
-    echo -e "\e[1;32m🔑 Gerando sua Key...\e[0m"
-    # Simulação de geração de key
-    key=$(uuidgen)
-    echo -e "\e[1;32mSua Key gerada: $key\e[0m"
-    sleep 2
+# Função para atualizar pastas
+function atualizar_pastas() {
+    echo -e "\033[1;34mAtualizando pastas...\033[0m"
+    # Adicione o código para atualizar as pastas aqui
     admin_menu
 }
 
-# Inicializa o menu principal
+# Função para iniciar o host
+function iniciar_host() {
+    echo -e "\033[1;34mIniciando o host...\033[0m"
+    # Adicione o código para iniciar o host aqui
+    admin_menu
+}
+
+# Função para parar o host
+function parar_host() {
+    echo -e "\033[1;34mParando o host...\033[0m"
+    # Adicione o código para parar o host aqui
+    admin_menu
+}
+
+# Exibe o menu principal ao iniciar
 show_menu
