@@ -1,249 +1,199 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
 
-# Instalando pacotes necessários
-pkg update -y && pkg upgrade -y
-pkg install -y wget unzip screen dialog curl
-
-# Caminhos para os diretórios
-GAME_MODE_PATH="/data/data/com.termux/files/home/storage/shared/ShadowHost/gamemode"
-DOWNLOADED_PATH="/data/data/com.termux/files/home/storage/shared/ShadowHost/downloaded_files"
-INFO_FILE="/data/data/com.termux/files/home/storage/shared/ShadowHost/ShadowHost_info.txt"
-INSTALLED_FILE="/data/data/com.termux/files/home/storage/shared/ShadowHost/ShadowHost_installed.txt"
-
-# Criando diretórios necessários
-mkdir -p "$GAME_MODE_PATH"
-mkdir -p "$DOWNLOADED_PATH"
-
-# Arquivo para armazenar a Key gerada
-KEY_FILE="$HOME/.shadow_key"
-
-# Gerando cores para o menu
-RED="\e[31m"
-GREEN="\e[32m"
-BLUE="\e[34m"
-YELLOW="\e[33m"
-RESET="\e[0m"
-
-# Gerando um IP aleatório funcional
-IP=$(curl -s https://api.ipify.org)
-PORT=$((1000 + RANDOM % 55535))
-
-# Função para armazenar as informações no arquivo
-salvar_informacoes() {
-    echo "===============================" >> "$INFO_FILE"
-    echo "Informações ShadowHost - $(date)" >> "$INFO_FILE"
-    echo "IP: $IP:$PORT" >> "$INFO_FILE"
-    echo "Pasta de GameMode: $GAME_MODE_PATH" >> "$INFO_FILE"
-    echo "Pasta de Downloads: $DOWNLOADED_PATH" >> "$INFO_FILE"
-    echo "===============================" >> "$INFO_FILE"
-}
-
-# ================== MENU PRINCIPAL ==================
-menu_principal() {
+# Função para exibir o menu principal
+show_menu() {
     clear
-    echo -e "${YELLOW}====================================${RESET}"
-    echo -e "${GREEN}        🌑 SHADOW HOST 🌑          ${RESET}"
-    echo -e "${YELLOW}====================================${RESET}"
-    echo -e "${BLUE}1.${RESET} Logar Key"
-    echo -e "${BLUE}2.${RESET} Pegar Key"
-    echo -e "${BLUE}3.${RESET} Abrir Painel Admin"
-    echo -e "${BLUE}4.${RESET} Atualizar Pastas"
-    echo -e "${BLUE}5.${RESET} Sair"
-    echo -e "${YELLOW}====================================${RESET}"
-    read -p "Escolha uma opção: " choice
-    case $choice in
-        1) logar_key ;;
-        2) pegar_key ;;
-        3) painel_admin ;;
-        4) atualizar_pastas ;;
-        5) sair ;;
-        *) echo -e "${RED}Opção inválida!${RESET}"; sleep 2; menu_principal ;;
-    esac
-}
-
-# ================== LOGAR COM KEY ==================
-logar_key() {
-    if [ ! -f "$KEY_FILE" ]; then
-        echo -e "${RED}Nenhuma Key gerada! Vá para o Painel Admin para gerar uma.${RESET}"
-        read -p "Pressione Enter para voltar..."
-        menu_principal
-    else
-        read -p "Digite sua Key: " key_digitada
-        key_salva=$(cat "$KEY_FILE")
-        if [ "$key_digitada" == "$key_salva" ]; then
-            echo -e "${GREEN}Login bem-sucedido!${RESET}"
-            sleep 1
-            menu_host
-        else
-            echo -e "${RED}Key incorreta!${RESET}"
+    echo -e "\e[1;34m███████╗██╗  ██╗ █████╗ ██╗    ██╗ ██████╗ ███████╗███████╗\e[0m"
+    echo -e "\e[1;34m╚══██╔══╝██║  ██║██╔══██╗██║    ██║██╔══██╗██╔════╝██╔════╝\e[0m"
+    echo -e "\e[1;34m   ██║   ███████║███████║██║ █╗ ██║██║  ██║███████╗███████╗\e[0m"
+    echo -e "\e[1;34m   ██║   ██╔══██║██╔══██║██║███╗██║██║  ██║╚════██║╚════██║\e[0m"
+    echo -e "\e[1;34m   ██║   ██║  ██║██║  ██║╚███╔███║██████╔╝███████║███████║\e[0m"
+    echo -e "\e[1;34m   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝╚═════╝ ╚══════╝╚══════╝\e[0m"
+    echo
+    echo -e "\e[1;32mShadow Host Menu:\e[0m"
+    echo
+    echo -e "\e[1;33m1.\e[0m HOST SA-MP"
+    echo -e "\e[1;33m2.\e[0m Logar com Key"
+    echo -e "\e[1;33m3.\e[0m Pegar Key"
+    echo -e "\e[1;33m4.\e[0m Abrir Painel Admin (Senha: 16052011)"
+    echo -e "\e[1;33m5.\e[0m Sair"
+    echo
+    read -p "Escolha uma opção [1-5]: " option
+    case $option in
+        1)
+            samp_host_menu
+            ;;
+        2)
+            logar_key
+            ;;
+        3)
+            pegar_key
+            ;;
+        4)
+            painel_admin
+            ;;
+        5)
+            exit 0
+            ;;
+        *)
+            echo "Opção inválida! Tente novamente."
             sleep 2
-            menu_principal
-        fi
-    fi
+            show_menu
+            ;;
+    esac
 }
 
-# ================== PEGAR KEY ==================
+# Função de HOST SA-MP
+samp_host_menu() {
+    clear
+    echo -e "\e[1;32mMENU - HOST SA-MP:\e[0m"
+    echo
+    echo -e "\e[1;33m1.\e[0m Iniciar Servidor"
+    echo -e "\e[1;33m2.\e[0m Parar Servidor"
+    echo -e "\e[1;33m3.\e[0m Verificar Arquivos da Gamemode"
+    echo -e "\e[1;33m4.\e[0m Voltar ao Menu Principal"
+    echo
+    read -p "Escolha uma opção [1-4]: " option
+    case $option in
+        1)
+            iniciar_servidor
+            ;;
+        2)
+            parar_servidor
+            ;;
+        3)
+            verificar_gamemode
+            ;;
+        4)
+            show_menu
+            ;;
+        *)
+            echo "Opção inválida! Tente novamente."
+            sleep 2
+            samp_host_menu
+            ;;
+    esac
+}
+
+# Função de logar com Key
+logar_key() {
+    clear
+    echo -e "\e[1;32mPor favor, insira sua Key de login:\e[0m"
+    read -p "Key: " key
+    echo "Logando com a Key: $key..."
+    sleep 1
+    show_menu
+}
+
+# Função para pegar a Key
 pegar_key() {
-    if [ ! -f "$KEY_FILE" ]; then
-        echo -e "${RED}Nenhuma Key gerada! Peça ao Admin para criar uma.${RESET}"
-    else
-        echo -e "${GREEN}Sua Key: $(cat $KEY_FILE)${RESET}"
-    fi
-    read -p "Pressione Enter para voltar..."
-    menu_principal
+    clear
+    echo -e "\e[1;32mGerando sua Key...\e[0m"
+    key=$(openssl rand -base64 32)
+    echo "Sua Key gerada é: $key"
+    sleep 2
+    show_menu
 }
 
-# ================== PAINEL ADMIN ==================
+# Função do painel Admin (com senha)
 painel_admin() {
-    read -p "Digite a senha de Admin: " senha
+    clear
+    read -sp "Digite a senha para acessar o Painel Admin: " senha
+    echo
     if [ "$senha" == "16052011" ]; then
-        echo -e "${GREEN}Acesso concedido ao Painel Admin!${RESET}"
-        sleep 1
-        menu_admin
+        echo -e "\e[1;32mAcesso autorizado!\e[0m"
+        painel_admin_menu
     else
-        echo -e "${RED}Senha incorreta!${RESET}"
+        echo -e "\e[1;31mSenha incorreta. Tente novamente.\e[0m"
         sleep 2
-        menu_principal
+        show_menu
     fi
 }
 
-# ================== MENU ADMIN ==================
-menu_admin() {
+# Menu de opções no Painel Admin
+painel_admin_menu() {
     clear
-    echo -e "${YELLOW}====================================${RESET}"
-    echo -e "${GREEN}       🌑 PAINEL ADMIN 🌑         ${RESET}"
-    echo -e "${YELLOW}====================================${RESET}"
-    echo -e "${BLUE}1.${RESET} Gerar Key"
-    echo -e "${BLUE}2.${RESET} Verificar Instalação"
-    echo -e "${BLUE}3.${RESET} Reabrir Menu"
-    echo -e "${BLUE}4.${RESET} Voltar"
-    echo -e "${YELLOW}====================================${RESET}"
-    read -p "Escolha uma opção: " choice
-    case $choice in
-        1) gerar_key ;;
-        2) verificar_instalacao ;;
-        3) reabrir_menu ;;
-        4) menu_principal ;;
-        *) echo -e "${RED}Opção inválida!${RESET}"; sleep 2; menu_admin ;;
+    echo -e "\e[1;32mPainel Admin - Shadow Host:\e[0m"
+    echo
+    echo -e "\e[1;33m1.\e[0m Gerar Key"
+    echo -e "\e[1;33m2.\e[0m Atualizar Pastas"
+    echo -e "\e[1;33m3.\e[0m Voltar ao Menu Principal"
+    echo
+    read -p "Escolha uma opção [1-3]: " option
+    case $option in
+        1)
+            gerar_key
+            ;;
+        2)
+            atualizar_pastas
+            ;;
+        3)
+            show_menu
+            ;;
+        *)
+            echo "Opção inválida! Tente novamente."
+            sleep 2
+            painel_admin_menu
+            ;;
     esac
 }
 
-# ================== GERAR KEY ==================
+# Função de geração de Key no Painel Admin
 gerar_key() {
-    nova_key=$(openssl rand -hex 6)
-    echo "$nova_key" > "$KEY_FILE"
-    echo -e "${GREEN}Nova Key gerada: $nova_key${RESET}"
-    read -p "Pressione Enter para voltar..."
-    menu_admin
-}
-
-# ================== REABRIR O MENU ==================
-reabrir_menu() {
-    # Reabrindo o menu principal
-    ./shadow_host.sh
-}
-
-# ================== VERIFICAR INSTALAÇÃO ==================
-verificar_instalacao() {
-    if [ -f "$INSTALLED_FILE" ]; then
-        echo -e "${GREEN}ShadowHost já instalado!${RESET}"
-    else
-        echo -e "${RED}ShadowHost não instalado! Por favor, execute a instalação.${RESET}"
-    fi
-    read -p "Pressione Enter para voltar..."
-    menu_admin
-}
-
-# ================== MENU HOST ==================
-menu_host() {
     clear
-    echo -e "${YELLOW}====================================${RESET}"
-    echo -e "${GREEN}        🌑 SHADOW HOST 🌑          ${RESET}"
-    echo -e "${YELLOW}====================================${RESET}"
-
-    # Listar arquivos da pasta gamemode
-    echo -e "${BLUE}Arquivos na pasta gamemode:${RESET}"
-    ls "$GAME_MODE_PATH" || echo -e "${RED}Nenhum arquivo encontrado na pasta gamemode.${RESET}"
-    
-    echo -e "${BLUE}1.${RESET} Gerar meu IP"
-    echo -e "${BLUE}2.${RESET} Logar meu IP"
-    echo -e "${BLUE}3.${RESET} Iniciar Host"
-    echo -e "${BLUE}4.${RESET} Parar Host"
-    echo -e "${BLUE}5.${RESET} Sair"
-    echo -e "${YELLOW}====================================${RESET}"
-    read -p "Escolha uma opção: " choice
-    case $choice in
-        1) gerar_ip ;;
-        2) logar_ip ;;
-        3) iniciar_host ;;
-        4) parar_host ;;
-        5) sair ;;
-        *) echo -e "${RED}Opção inválida!${RESET}"; sleep 2; menu_host ;;
-    esac
+    echo -e "\e[1;32mGerando uma nova Key...\e[0m"
+    key=$(openssl rand -base64 32)
+    echo "Sua nova Key gerada é: $key"
+    sleep 2
+    painel_admin_menu
 }
 
-# ================== GERAR IP ==================
-gerar_ip() {
-    echo -e "${GREEN}Seu IP Gerado: $IP:$PORT${RESET}"
-    salvar_informacoes
-    read -p "Pressione Enter para voltar..."
-    menu_host
-}
-
-# ================== LOGAR IP ==================
-logar_ip() {
-    echo -e "${GREEN}IP do Servidor: $IP:$PORT${RESET}"
-    salvar_informacoes
-    read -p "Pressione Enter para voltar..."
-    menu_host
-}
-
-# ================== INICIAR HOST ==================
-iniciar_host() {
-    if [ -z "$(ls -A "$GAME_MODE_PATH")" ]; then
-        echo -e "${RED}A pasta 'gamemode' está vazia! Adicione sua GM antes de iniciar o host.${RESET}"
-        read -p "Pressione Enter para voltar..."
-        menu_host
-    else
-        cp -r "$GAME_MODE_PATH"/* ~/samp_host/samp03/
-        cd ~/samp_host/samp03
-        screen -dmS samp ./samp03svr -port $PORT
-        echo -e "${GREEN}Servidor iniciado com sucesso!${RESET}"
-        echo -e "${GREEN}IP: $IP:${PORT}${RESET}"
-        salvar_informacoes
-        read -p "Pressione Enter para voltar..."
-        menu_host
-    fi
-}
-
-# ================== PARAR HOST ==================
-parar_host() {
-    screen -S samp -X quit
-    echo -e "${RED}Servidor desligado!${RESET}"
-    read -p "Pressione Enter para voltar..."
-    menu_host
-}
-
-# ================== SAIR ==================
-sair() {
-    clear
-    echo -e "${YELLOW}Shadow Host finalizado.${RESET}"
-    exit 0
-}
-
-# ================== ATUALIZAR PASTAS ==================
+# Função para atualizar as pastas
 atualizar_pastas() {
-    # Verifica se há novos arquivos na pasta de downloads
-    if [ "$(ls -A "$DOWNLOADED_PATH")" ]; then
-        echo -e "${GREEN}Novos arquivos encontrados! Atualizando...${RESET}"
-        cp -r "$DOWNLOADED_PATH"/* "$GAME_MODE_PATH/"
-        echo -e "${GREEN}Arquivos atualizados com sucesso!${RESET}"
-    else
-        echo -e "${RED}Nenhum arquivo novo encontrado na pasta de downloads.${RESET}"
-    fi
-    read -p "Pressione Enter para voltar..."
-    menu_principal
+    clear
+    echo -e "\e[1;32mAtualizando pastas...\e[0m"
+    # Comando para atualizar ou verificar arquivos
+    # Você pode adicionar comandos para verificar a pasta e baixar atualizações
+    sleep 2
+    painel_admin_menu
 }
 
-# Executa o menu inicial
-menu_principal
+# Função para iniciar o servidor
+iniciar_servidor() {
+    clear
+    echo -e "\e[1;32mIniciando o servidor...\e[0m"
+    # Comando para iniciar o servidor
+    # Adicione a execução do servidor SA-MP aqui, por exemplo:
+    # ./samp03svr
+    sleep 2
+    samp_host_menu
+}
+
+# Função para parar o servidor
+parar_servidor() {
+    clear
+    echo -e "\e[1;32mParando o servidor...\e[0m"
+    # Comando para parar o servidor
+    # Adicione o comando necessário para matar o processo do servidor
+    # pkill -f samp03svr
+    sleep 2
+    samp_host_menu
+}
+
+# Função para verificar os arquivos da Gamemode
+verificar_gamemode() {
+    clear
+    echo -e "\e[1;32mVerificando arquivos da Gamemode...\e[0m"
+    # Aqui você pode colocar a lógica para verificar se há arquivos na pasta `gamemode`
+    if [ -z "$(ls /sdcard/ShadowHost/gamemode)" ]; then
+        echo -e "\e[1;31mNenhum arquivo encontrado na pasta Gamemode.\e[0m"
+    else
+        echo -e "\e[1;32mArquivos encontrados na pasta Gamemode:\e[0m"
+        ls /sdcard/ShadowHost/gamemode
+    fi
+    sleep 2
+    samp_host_menu
+}
+
+# Chama o menu inicial
+show_menu
