@@ -1,0 +1,249 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+# Instalando pacotes necessários
+pkg update -y && pkg upgrade -y
+pkg install -y wget unzip screen dialog curl
+
+# Caminhos para os diretórios
+GAME_MODE_PATH="/data/data/com.termux/files/home/storage/shared/ShadowHost/gamemode"
+DOWNLOADED_PATH="/data/data/com.termux/files/home/storage/shared/ShadowHost/downloaded_files"
+INFO_FILE="/data/data/com.termux/files/home/storage/shared/ShadowHost/ShadowHost_info.txt"
+INSTALLED_FILE="/data/data/com.termux/files/home/storage/shared/ShadowHost/ShadowHost_installed.txt"
+
+# Criando diretórios necessários
+mkdir -p "$GAME_MODE_PATH"
+mkdir -p "$DOWNLOADED_PATH"
+
+# Arquivo para armazenar a Key gerada
+KEY_FILE="$HOME/.shadow_key"
+
+# Gerando cores para o menu
+RED="\e[31m"
+GREEN="\e[32m"
+BLUE="\e[34m"
+YELLOW="\e[33m"
+RESET="\e[0m"
+
+# Gerando um IP aleatório funcional
+IP=$(curl -s https://api.ipify.org)
+PORT=$((1000 + RANDOM % 55535))
+
+# Função para armazenar as informações no arquivo
+salvar_informacoes() {
+    echo "===============================" >> "$INFO_FILE"
+    echo "Informações ShadowHost - $(date)" >> "$INFO_FILE"
+    echo "IP: $IP:$PORT" >> "$INFO_FILE"
+    echo "Pasta de GameMode: $GAME_MODE_PATH" >> "$INFO_FILE"
+    echo "Pasta de Downloads: $DOWNLOADED_PATH" >> "$INFO_FILE"
+    echo "===============================" >> "$INFO_FILE"
+}
+
+# ================== MENU PRINCIPAL ==================
+menu_principal() {
+    clear
+    echo -e "${YELLOW}====================================${RESET}"
+    echo -e "${GREEN}        🌑 SHADOW HOST 🌑          ${RESET}"
+    echo -e "${YELLOW}====================================${RESET}"
+    echo -e "${BLUE}1.${RESET} Logar Key"
+    echo -e "${BLUE}2.${RESET} Pegar Key"
+    echo -e "${BLUE}3.${RESET} Abrir Painel Admin"
+    echo -e "${BLUE}4.${RESET} Atualizar Pastas"
+    echo -e "${BLUE}5.${RESET} Sair"
+    echo -e "${YELLOW}====================================${RESET}"
+    read -p "Escolha uma opção: " choice
+    case $choice in
+        1) logar_key ;;
+        2) pegar_key ;;
+        3) painel_admin ;;
+        4) atualizar_pastas ;;
+        5) sair ;;
+        *) echo -e "${RED}Opção inválida!${RESET}"; sleep 2; menu_principal ;;
+    esac
+}
+
+# ================== LOGAR COM KEY ==================
+logar_key() {
+    if [ ! -f "$KEY_FILE" ]; then
+        echo -e "${RED}Nenhuma Key gerada! Vá para o Painel Admin para gerar uma.${RESET}"
+        read -p "Pressione Enter para voltar..."
+        menu_principal
+    else
+        read -p "Digite sua Key: " key_digitada
+        key_salva=$(cat "$KEY_FILE")
+        if [ "$key_digitada" == "$key_salva" ]; then
+            echo -e "${GREEN}Login bem-sucedido!${RESET}"
+            sleep 1
+            menu_host
+        else
+            echo -e "${RED}Key incorreta!${RESET}"
+            sleep 2
+            menu_principal
+        fi
+    fi
+}
+
+# ================== PEGAR KEY ==================
+pegar_key() {
+    if [ ! -f "$KEY_FILE" ]; then
+        echo -e "${RED}Nenhuma Key gerada! Peça ao Admin para criar uma.${RESET}"
+    else
+        echo -e "${GREEN}Sua Key: $(cat $KEY_FILE)${RESET}"
+    fi
+    read -p "Pressione Enter para voltar..."
+    menu_principal
+}
+
+# ================== PAINEL ADMIN ==================
+painel_admin() {
+    read -p "Digite a senha de Admin: " senha
+    if [ "$senha" == "16052011" ]; then
+        echo -e "${GREEN}Acesso concedido ao Painel Admin!${RESET}"
+        sleep 1
+        menu_admin
+    else
+        echo -e "${RED}Senha incorreta!${RESET}"
+        sleep 2
+        menu_principal
+    fi
+}
+
+# ================== MENU ADMIN ==================
+menu_admin() {
+    clear
+    echo -e "${YELLOW}====================================${RESET}"
+    echo -e "${GREEN}       🌑 PAINEL ADMIN 🌑         ${RESET}"
+    echo -e "${YELLOW}====================================${RESET}"
+    echo -e "${BLUE}1.${RESET} Gerar Key"
+    echo -e "${BLUE}2.${RESET} Verificar Instalação"
+    echo -e "${BLUE}3.${RESET} Reabrir Menu"
+    echo -e "${BLUE}4.${RESET} Voltar"
+    echo -e "${YELLOW}====================================${RESET}"
+    read -p "Escolha uma opção: " choice
+    case $choice in
+        1) gerar_key ;;
+        2) verificar_instalacao ;;
+        3) reabrir_menu ;;
+        4) menu_principal ;;
+        *) echo -e "${RED}Opção inválida!${RESET}"; sleep 2; menu_admin ;;
+    esac
+}
+
+# ================== GERAR KEY ==================
+gerar_key() {
+    nova_key=$(openssl rand -hex 6)
+    echo "$nova_key" > "$KEY_FILE"
+    echo -e "${GREEN}Nova Key gerada: $nova_key${RESET}"
+    read -p "Pressione Enter para voltar..."
+    menu_admin
+}
+
+# ================== REABRIR O MENU ==================
+reabrir_menu() {
+    # Reabrindo o menu principal
+    ./shadow_host.sh
+}
+
+# ================== VERIFICAR INSTALAÇÃO ==================
+verificar_instalacao() {
+    if [ -f "$INSTALLED_FILE" ]; then
+        echo -e "${GREEN}ShadowHost já instalado!${RESET}"
+    else
+        echo -e "${RED}ShadowHost não instalado! Por favor, execute a instalação.${RESET}"
+    fi
+    read -p "Pressione Enter para voltar..."
+    menu_admin
+}
+
+# ================== MENU HOST ==================
+menu_host() {
+    clear
+    echo -e "${YELLOW}====================================${RESET}"
+    echo -e "${GREEN}        🌑 SHADOW HOST 🌑          ${RESET}"
+    echo -e "${YELLOW}====================================${RESET}"
+
+    # Listar arquivos da pasta gamemode
+    echo -e "${BLUE}Arquivos na pasta gamemode:${RESET}"
+    ls "$GAME_MODE_PATH" || echo -e "${RED}Nenhum arquivo encontrado na pasta gamemode.${RESET}"
+    
+    echo -e "${BLUE}1.${RESET} Gerar meu IP"
+    echo -e "${BLUE}2.${RESET} Logar meu IP"
+    echo -e "${BLUE}3.${RESET} Iniciar Host"
+    echo -e "${BLUE}4.${RESET} Parar Host"
+    echo -e "${BLUE}5.${RESET} Sair"
+    echo -e "${YELLOW}====================================${RESET}"
+    read -p "Escolha uma opção: " choice
+    case $choice in
+        1) gerar_ip ;;
+        2) logar_ip ;;
+        3) iniciar_host ;;
+        4) parar_host ;;
+        5) sair ;;
+        *) echo -e "${RED}Opção inválida!${RESET}"; sleep 2; menu_host ;;
+    esac
+}
+
+# ================== GERAR IP ==================
+gerar_ip() {
+    echo -e "${GREEN}Seu IP Gerado: $IP:$PORT${RESET}"
+    salvar_informacoes
+    read -p "Pressione Enter para voltar..."
+    menu_host
+}
+
+# ================== LOGAR IP ==================
+logar_ip() {
+    echo -e "${GREEN}IP do Servidor: $IP:$PORT${RESET}"
+    salvar_informacoes
+    read -p "Pressione Enter para voltar..."
+    menu_host
+}
+
+# ================== INICIAR HOST ==================
+iniciar_host() {
+    if [ -z "$(ls -A "$GAME_MODE_PATH")" ]; then
+        echo -e "${RED}A pasta 'gamemode' está vazia! Adicione sua GM antes de iniciar o host.${RESET}"
+        read -p "Pressione Enter para voltar..."
+        menu_host
+    else
+        cp -r "$GAME_MODE_PATH"/* ~/samp_host/samp03/
+        cd ~/samp_host/samp03
+        screen -dmS samp ./samp03svr -port $PORT
+        echo -e "${GREEN}Servidor iniciado com sucesso!${RESET}"
+        echo -e "${GREEN}IP: $IP:${PORT}${RESET}"
+        salvar_informacoes
+        read -p "Pressione Enter para voltar..."
+        menu_host
+    fi
+}
+
+# ================== PARAR HOST ==================
+parar_host() {
+    screen -S samp -X quit
+    echo -e "${RED}Servidor desligado!${RESET}"
+    read -p "Pressione Enter para voltar..."
+    menu_host
+}
+
+# ================== SAIR ==================
+sair() {
+    clear
+    echo -e "${YELLOW}Shadow Host finalizado.${RESET}"
+    exit 0
+}
+
+# ================== ATUALIZAR PASTAS ==================
+atualizar_pastas() {
+    # Verifica se há novos arquivos na pasta de downloads
+    if [ "$(ls -A "$DOWNLOADED_PATH")" ]; then
+        echo -e "${GREEN}Novos arquivos encontrados! Atualizando...${RESET}"
+        cp -r "$DOWNLOADED_PATH"/* "$GAME_MODE_PATH/"
+        echo -e "${GREEN}Arquivos atualizados com sucesso!${RESET}"
+    else
+        echo -e "${RED}Nenhum arquivo novo encontrado na pasta de downloads.${RESET}"
+    fi
+    read -p "Pressione Enter para voltar..."
+    menu_principal
+}
+
+# Executa o menu inicial
+menu_principal
