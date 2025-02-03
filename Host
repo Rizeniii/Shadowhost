@@ -37,7 +37,7 @@ samp_host_menu() {
     echo -e "\e[1;32m🌟 MENU - HOST SA-MP 🌟\e[0m"
     echo
     echo -e "\e[1;33m1.\e[0m 🔑 Logar com Key"
-    echo -e "\e[1;33m2.\e[0m 🛠️ Abrir Painel Admin (Senha: 16052011)"
+    echo -e "\e[1;33m2.\e[0m 🛠️ Abrir Painel Admin
     echo -e "\e[1;33m3.\e[0m 🔙 Voltar ao Menu Principal"
     echo
     read -p "Escolha uma opção [1-3]: " option
