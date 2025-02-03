@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Arquivo para armazenar as chaves
+KEY_FILE="keys.txt"
+KEY_LOGGED_IN="false"  # Para verificar se o usuário está logado com a key
+SERVER_RUNNING="false"  # Para verificar se o servidor está rodando
+
 # Função para mostrar o menu principal
 function show_menu() {
     clear
@@ -50,78 +55,131 @@ function show_credits() {
     show_menu
 }
 
-# Função de login da Key
+# Função para logar com a chave
 function logar_key() {
-    echo -e "\033[1;34mLogando com a Key...\033[0m"
-    # Adicione seu código para logar com a key aqui
-    show_menu
+    if [ "$KEY_LOGGED_IN" == "true" ]; then
+        echo -e "\033[1;32mVocê já está logado com uma chave.\033[0m"
+        host_samp_menu
+        return
+    fi
+
+    read -p "Digite sua chave: " key
+    if grep -q "$key" "$KEY_FILE"; then
+        KEY_LOGGED_IN="true"
+        echo -e "\033[1;32mChave válida! Você está logado.\033[0m"
+    else
+        echo -e "\033[1;31mChave inválida!\033[0m"
+    fi
+    host_samp_menu
 }
 
-# Função para pegar a Key
+# Função para pegar uma nova chave
 function pegar_key() {
-    echo -e "\033[1;34mPegando a Key...\033[0m"
-    # Adicione seu código para pegar a key aqui
-    show_menu
+    if [ "$KEY_LOGGED_IN" == "true" ]; then
+        echo -e "\033[1;32mVocê já está logado com uma chave.\033[0m"
+        host_samp_menu
+        return
+    fi
+
+    key=$(date +%s | sha256sum | base64 | head -c 32)  # Gera uma chave aleatória
+    echo "$key" >> "$KEY_FILE"
+    echo -e "\033[1;32mSua chave gerada: $key\033[0m"
+    echo -e "\033[1;32mSalva sua chave em um local seguro.\033[0m"
+    host_samp_menu
 }
 
-# Função para acessar o painel admin
+# Função para acessar o Painel Admin (proteção por senha)
 function painel_admin() {
-    clear
-    echo -e "\033[1;32m==============================\033[0m"
-    echo -e "\033[1;35m       Painel Admin           \033[0m"
-    echo -e "\033[1;32m==============================\033[0m"
-    read -s -p "Digite a senha do administrador: " senha
-    echo
+    read -p "Digite a senha do administrador: " senha
     if [ "$senha" == "16052011" ]; then
-        echo -e "\033[1;32mSenha correta! Acessando painel...\033[0m"
+        echo -e "\033[1;32mSenha correta! Bem-vindo ao painel Admin.\033[0m"
         admin_menu
     else
-        echo -e "\033[1;31mSenha incorreta. Tente novamente.\033[0m"
-        painel_admin
+        echo -e "\033[1;31mSenha incorreta! Acesso negado.\033[0m"
+        host_samp_menu
     fi
 }
 
-# Função do menu de administração
+# Função para o menu de administração
 function admin_menu() {
     clear
     echo -e "\033[1;32m==============================\033[0m"
-    echo -e "\033[1;33m     Menu de Administração    \033[0m"
+    echo -e "\033[1;34m        Admin Menu            \033[0m"
     echo -e "\033[1;32m==============================\033[0m"
     echo -e "\033[1;36m1. Atualizar Pastas\033[0m"
     echo -e "\033[1;36m2. Iniciar Host\033[0m"
     echo -e "\033[1;36m3. Parar Host\033[0m"
-    echo -e "\033[1;31m4. Voltar\033[0m"
+    echo -e "\033[1;36m4. Obter IP\033[0m"
+    echo -e "\033[1;36m5. Logar IP\033[0m"
     echo -e "\033[1;32m==============================\033[0m"
     read -p "Escolha uma opção: " option
     case $option in
         1) atualizar_pastas ;;
         2) iniciar_host ;;
         3) parar_host ;;
-        4) show_menu ;;
+        4) obter_ip ;;
+        5) logar_ip ;;
         *) echo -e "\033[1;31mOpção inválida! Tente novamente.\033[0m" ; admin_menu ;;
     esac
 }
 
-# Função para atualizar pastas
+# Função para atualizar pastas (verificar se houve modificações)
 function atualizar_pastas() {
-    echo -e "\033[1;34mAtualizando pastas...\033[0m"
-    # Adicione o código para atualizar as pastas aqui
+    echo -e "\033[1;32mVerificando atualizações nas pastas...\033[0m"
+    # Coloque o código para verificar novas pastas ou arquivos aqui
+    echo -e "\033[1;32mPastas atualizadas com sucesso.\033[0m"
     admin_menu
 }
 
-# Função para iniciar o host
+# Função para obter IP (gera um IP aleatório)
+function obter_ip() {
+    IP=$(shuf -i 1000-9999 -n 1).shost.com
+    echo -e "\033[1;32mSeu IP gerado: $IP\033[0m"
+    admin_menu
+}
+
+# Função para logar IP
+function logar_ip() {
+    read -p "Digite o IP para logar: " ip
+    echo -e "\033[1;32mVocê logou com o IP: $ip\033[0m"
+    admin_menu
+}
+
+# Função para iniciar o servidor
 function iniciar_host() {
-    echo -e "\033[1;34mIniciando o host...\033[0m"
-    # Adicione o código para iniciar o host aqui
+    if [ "$KEY_LOGGED_IN" == "false" ]; then
+        echo -e "\033[1;31mVocê precisa estar logado com uma chave para iniciar o servidor.\033[0m"
+        admin_menu
+        return
+    fi
+
+    if [ "$SERVER_RUNNING" == "true" ]; then
+        echo -e "\033[1;31mO servidor já está rodando.\033[0m"
+        admin_menu
+        return
+    fi
+
+    echo -e "\033[1;32mIniciando o servidor SAMP...\033[0m"
+    # Coloque o comando para iniciar o servidor aqui
+    SERVER_RUNNING="true"
+    echo -e "\033[1;32mServidor iniciado com sucesso.\033[0m"
     admin_menu
 }
 
-# Função para parar o host
+# Função para parar o servidor
 function parar_host() {
-    echo -e "\033[1;34mParando o host...\033[0m"
-    # Adicione o código para parar o host aqui
+    if [ "$SERVER_RUNNING" == "false" ]; then
+        echo -e "\033[1;31mO servidor não está rodando.\033[0m"
+        admin_menu
+        return
+    fi
+
+    echo -e "\033[1;32mParando o servidor SAMP...\033[0m"
+    # Coloque o comando para parar o servidor aqui
+    SERVER_RUNNING="false"
+    echo -e "\033[1;32mServidor parado com sucesso.\033[0m"
     admin_menu
 }
 
-# Exibe o menu principal ao iniciar
+# Iniciar o script
 show_menu
