@@ -13,26 +13,14 @@ show_menu() {
     echo -e "\e[1;32mShadow Host Menu:\e[0m"
     echo
     echo -e "\e[1;33m1.\e[0m HOST SA-MP"
-    echo -e "\e[1;33m2.\e[0m Logar com Key"
-    echo -e "\e[1;33m3.\e[0m Pegar Key"
-    echo -e "\e[1;33m4.\e[0m Abrir Painel Admin (Senha: 16052011)"
-    echo -e "\e[1;33m5.\e[0m Sair"
+    echo -e "\e[1;33m2.\e[0m Sair"
     echo
-    read -p "Escolha uma opção [1-5]: " option
+    read -p "Escolha uma opção [1-2]: " option
     case $option in
         1)
             samp_host_menu
             ;;
         2)
-            logar_key
-            ;;
-        3)
-            pegar_key
-            ;;
-        4)
-            painel_admin
-            ;;
-        5)
             exit 0
             ;;
         *)
@@ -48,21 +36,21 @@ samp_host_menu() {
     clear
     echo -e "\e[1;32mMENU - HOST SA-MP:\e[0m"
     echo
-    echo -e "\e[1;33m1.\e[0m Iniciar Servidor"
-    echo -e "\e[1;33m2.\e[0m Parar Servidor"
-    echo -e "\e[1;33m3.\e[0m Verificar Arquivos da Gamemode"
+    echo -e "\e[1;33m1.\e[0m Logar com Key"
+    echo -e "\e[1;33m2.\e[0m Abrir Painel Admin (Senha: 16052011)"
+    echo -e "\e[1;33m3.\e[0m Iniciar Servidor"
     echo -e "\e[1;33m4.\e[0m Voltar ao Menu Principal"
     echo
     read -p "Escolha uma opção [1-4]: " option
     case $option in
         1)
-            iniciar_servidor
+            logar_key
             ;;
         2)
-            parar_servidor
+            painel_admin
             ;;
         3)
-            verificar_gamemode
+            iniciar_servidor
             ;;
         4)
             show_menu
@@ -82,31 +70,21 @@ logar_key() {
     read -p "Key: " key
     echo "Logando com a Key: $key..."
     sleep 1
-    show_menu
+    samp_host_menu
 }
 
-# Função para pegar a Key
-pegar_key() {
-    clear
-    echo -e "\e[1;32mGerando sua Key...\e[0m"
-    key=$(openssl rand -base64 32)
-    echo "Sua Key gerada é: $key"
-    sleep 2
-    show_menu
-}
-
-# Função do painel Admin (com senha)
+# Função para abrir o painel Admin
 painel_admin() {
     clear
     read -sp "Digite a senha para acessar o Painel Admin: " senha
     echo
     if [ "$senha" == "16052011" ]; then
-        echo -e "\e[1;32mAcesso autorizado!\e[0m"
+        echo -e "\e[1;32mAcesso autorizado ao Painel Admin!\e[0m"
         painel_admin_menu
     else
         echo -e "\e[1;31mSenha incorreta. Tente novamente.\e[0m"
         sleep 2
-        show_menu
+        samp_host_menu
     fi
 }
 
